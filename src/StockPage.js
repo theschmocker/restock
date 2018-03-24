@@ -9,17 +9,32 @@ class Stockpage extends Component {
     state = {
         stock: false,
     }
-    async componentDidMount() {
-        const endpoint = `/stock/${this.props.match.params.symbol}/quote`;
+    async getStock(symbol) {
+        this.setState({ stock: false });
+        const endpoint = `/stock/${symbol}/quote`;
         const res = await fetch(API_BASE + endpoint);
         const stock = await res.json();
 
-        this.setState({
-            stock,
-        });
-
-        console.log(stock);
+        return stock;
     }
+
+    async componentDidMount() {
+        const stock = await this.getStock(this.props.match.params.symbol);
+
+        this.setState({ stock });
+    }
+
+    async componentWillReceiveProps(nextProps) {
+        console.log();
+        console.log();
+        if (this.props.match.params.symbol !== nextProps.match.params.symbol) {
+            const stock = await this.getStock(nextProps.match.params.symbol);
+
+            this.setState({ stock });
+
+        }
+    }
+
 
     render() {
         const { params } = this.props.match;
