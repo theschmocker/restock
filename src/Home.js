@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import SavedStocks from './components/SavedStocks';
+
 //import Loader from './components/Loader';
 
 //const API_BASE = 'https://api.iextrading.com/1.0';
@@ -7,7 +9,7 @@ import React, { Component } from 'react';
 class Home extends Component {
     render() {
         return (
-            <h2>Saved stocks</h2>
+            <SavedStocks />
         );
     }
 }
