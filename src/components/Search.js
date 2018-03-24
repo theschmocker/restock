@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { Link, withRouter } from 'react-router-dom';
 
+import SaveButton from './SaveButton';
+
 class Search extends Component {
     state = {
         query: '',
@@ -66,6 +68,7 @@ const Result = ({ stock }) => {
     return (
         <ResultWrapper>
             <Link to={`/stock/${stock.symbol}`}>{stock.symbol} - {stock.name}</Link>
+            <SaveButton stock={stock} />
         </ResultWrapper>
     )
 }
