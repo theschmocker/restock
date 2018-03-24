@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import { Link, withRouter } from 'react-router-dom';
 
 class Search extends Component {
     state = {
         query: '',
+        focus: false,
     }
 
     changeInput = (e) => {
@@ -12,24 +14,44 @@ class Search extends Component {
         });
     }
 
+    focus = () => {
+        this.setState({ focus: true });
+    }
+    
+    blur = () => {
+        this.setState({ focus: false });
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (this.props.location.pathname !== nextProps.location.pathname) {
+            this.setState({
+                query: '',
+                focus: false,
+            });
+        }
+    }
+
     render() {
         return (
-            <SearchWrapper>
+            <SearchWrapper
+                onFocus={this.focus}
+                onBlur={this.blur}
+            >
                 <input 
                     type="text" 
                     value={this.state.query} 
                     ref={input => this.input = input} 
                     onChange={this.changeInput}
                 />
-                <SearchResults stocks={this.props.stocks} query={this.state.query} />
+                <SearchResults inputFocus={this.state.focus} stocks={this.props.stocks} query={this.state.query} />
             </SearchWrapper>
         );
     }
 }
 
-const SearchResults = ({ query, stocks }) => {
+const SearchResults = ({ query, stocks, inputFocus }) => {
     return (
-        <ResultList show={query.length > 0}>
+        <ResultList show={query.length > 0 && inputFocus}>
             {query && 
                 searchResults(stocks, query).map(stock => (
                     <Result key={stock.iexId} stock={stock}/>
@@ -43,12 +65,12 @@ const SearchResults = ({ query, stocks }) => {
 const Result = ({ stock }) => {
     return (
         <ResultWrapper>
-            <a href={`/stock/${stock.symbol}`}>{stock.symbol} - {stock.name}</a>
+            <Link to={`/stock/${stock.symbol}`}>{stock.symbol} - {stock.name}</Link>
         </ResultWrapper>
     )
 }
 
-export default Search;
+export default withRouter(Search);
 
 // Styled Components
 
@@ -63,6 +85,7 @@ const SearchWrapper = styled.div`
 `;
 
 const ResultList = styled.ul`
+    position: relative;
     max-height: ${props => props.show ? '300px' : '0px'};
     margin: 0;
     padding: 0;
