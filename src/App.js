@@ -6,6 +6,7 @@ import {
     BrowserRouter as Router,
     Route,
     Switch, 
+    Link,
 } from 'react-router-dom';
 
 //import Loader from './components/Loader';
@@ -29,19 +30,19 @@ class App extends Component {
 
     render() {
         return (
-            <div className="App">
-                <header className="App-header">
-                    <a href="/"><img src={logo} className="App-logo" alt="logo" /></a>
-                    <h1 className="App-title">Restock</h1>
-                </header>
-                <Search stocks={this.state.stocks} />
-                <Router>
+            <Router>
+                <div className="App">
+                    <header className="App-header">
+                        <Link to="/"><img src={logo} className="App-logo" alt="logo" /></Link>
+                        <h1 className="App-title">Restock</h1>
+                    </header>
+                    <Search stocks={this.state.stocks} />
                     <Switch>
                         <Route exact path="/" component={Home}/>
                         <Route path="/stock/:symbol" component={StockPage} />
                     </Switch>
-                </Router>
-            </div>
+                </div>
+            </Router>
         );
     }
 }
