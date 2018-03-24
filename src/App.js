@@ -18,14 +18,35 @@ const API_BASE = 'https://api.iextrading.com/1.0';
 const SYMBOLS_ROUTE = '/ref-data/symbols';
 
 class App extends Component {
-    state = {
-        stocks: [],
+    // state = {
+    //     stocks: [],
+    // }
+
+    constructor(props) {
+        super(props);
+
+        let stocks = [];
+
+        const store = window.localStorage;
+        if (store.getItem('symbols')) {
+            stocks = JSON.parse(store.getItem('symbols'));
+        }
+
+        this.state = {
+            stocks
+        };
+
     }
 
     async componentDidMount() {
-        const res = await fetch(API_BASE + SYMBOLS_ROUTE);
-        const stocks = await res.json();
-        this.setState({ stocks });
+        if (this.state.stocks.length === 0) {
+            const res = await fetch(API_BASE + SYMBOLS_ROUTE);
+            const stocks = await res.json();
+            this.setState({ stocks });
+
+            const store = window.localStorage;
+            store.setItem('symbols', JSON.stringify(stocks));
+        }
     }
 
     render() {
