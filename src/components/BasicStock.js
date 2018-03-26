@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 const BasicStock = ({ stock }) => (
     <StockWrapper>
-        <h1>{stock.companyName}</h1>
+        <h3>{stock.name}</h3>
         <p>{stock.symbol}</p>
         <h2>{stock.latestPrice}</h2>
     </StockWrapper>

@@ -30,6 +30,7 @@ class Search extends Component {
         if (this.state.stocks.length === 0) {
             const res = await fetch(API_BASE + SYMBOLS_ROUTE);
             const stocks = await res.json();
+            stocks.forEach(stock => delete stock['date']);
             this.setState({ stocks });
 
             const store = window.localStorage;
@@ -72,18 +73,29 @@ class Search extends Component {
                     ref={input => this.input = input} 
                     onChange={this.changeInput}
                 />
-                <SearchResults inputFocus={this.state.focus} stocks={this.state.stocks} query={this.state.query} />
+                <SearchResults 
+                    inputFocus={this.state.focus} 
+                    stocks={this.state.stocks} 
+                    query={this.state.query} 
+                    savedStocks={this.props.savedStocks}
+                    stockMethods={this.props.stockMethods}
+                />
             </SearchWrapper>
         );
     }
 }
 
-const SearchResults = ({ query, stocks, inputFocus }) => {
+const SearchResults = ({ query, stocks, inputFocus, savedStocks, stockMethods }) => {
     return (
         <ResultList show={query.length > 0 && inputFocus}>
             {query && 
                 searchResults(stocks, query).map(stock => (
-                    <Result key={stock.iexId} stock={stock}/>
+                    <Result 
+                        key={stock.iexId} 
+                        stock={stock}
+                        savedStocks={savedStocks}
+                        stockMethods={stockMethods}
+                    />
                 ))
             }
         </ResultList>
@@ -91,11 +103,15 @@ const SearchResults = ({ query, stocks, inputFocus }) => {
     );
 }
 
-const Result = ({ stock }) => {
+const Result = ({ stock, savedStocks, stockMethods }) => {
     return (
         <ResultWrapper>
             <Link to={`/stock/${stock.symbol}`}>{stock.symbol} - {stock.name}</Link>
-            <SaveButton stock={stock} />
+            <SaveButton 
+                stock={stock} 
+                savedStocks={savedStocks}
+                stockMethods={stockMethods}
+            />
         </ResultWrapper>
     )
 }

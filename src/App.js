@@ -18,11 +18,38 @@ const API_BASE = 'https://api.iextrading.com/1.0';
 const SYMBOLS_ROUTE = '/ref-data/symbols';
 
 class App extends Component {
-    // state = {
-    //     stocks: [],
-    // }
+    constructor(props) {
+        super(props);
+        this.state = {
+            savedStocks: this.getSavedStocks(),
+            stockMethods: {
+                addStock: this.addStock,
+            }
+        }    
+    }
 
+    getSavedStocks = () => {
+        try {
+            const serializedStocks = localStorage.getItem('savedStocks');
+            return JSON.parse(serializedStocks) || [];
+        } catch (err) {
+            console.log(err);
+            // if getItem fails, return an empty array
+            return [];
+        }
+    }
 
+    addStock = (stock) => {
+        const savedStocks = this.getSavedStocks();    
+        const nextStocks = [...savedStocks, stock];
+        try {
+            const serialized = JSON.stringify(nextStocks);
+            localStorage.setItem('savedStocks', serialized);
+            this.setState({ savedStocks: nextStocks });
+        } catch (err) {
+            console.log(err);
+        }
+    }   // }
 
     render() {
         return (
@@ -32,9 +59,11 @@ class App extends Component {
                         <Link to="/"><img src={logo} className="App-logo" alt="logo" /></Link>
                         <h1 className="App-title">Restock</h1>
                     </header>
-                    <Search />
+                    <Search savedStocks={this.state.savedStocks} stockMethods={this.state.stockMethods}/>
                     <Switch>
-                        <Route exact path="/" component={Home}/>
+                        <Route exact path="/" render={() => (
+                            <Home savedStocks={this.state.savedStocks} />
+                        )}/>
                         <Route path="/stock/:symbol" component={StockPage} />
                     </Switch>
                 </div>

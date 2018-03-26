@@ -1,34 +1,17 @@
 import React from 'react';
 
-function storeExists() {
-    return Boolean(window.localStorage.getItem('savedStocks'));
-}
-
-function saveStock(stock) {
-    const store = window.localStorage;
-    if (stockIsSaved()) return;
-
-    if (storeExists()) {
-        const savedStocks = store.getItem('savedStocks');
-        let stocks = JSON.parse(savedStocks);
-        stocks.push(stock);
-        store.setItem('savedStocks', JSON.stringify(stocks));
-    } else {
-        let stocks = [stock,];
-        store.setItem('savedStocks', JSON.stringify(stocks));
+const stockIsSaved = (stock, savedStocks) => {
+    const stringified = JSON.stringify(stock);
+    for (let s of savedStocks) {
+        if (stringified === JSON.stringify(s)) return true;
     }
-}
-
-function stockIsSaved(stock) {
-    const stocks = JSON.parse(window.localStorage.getItem('savedStocks'));
-    if (Array.isArray(stocks) && stocks.includes(stock)) return true;
 
     return false;
 }
 
-const SaveButton = ({ stock }) => (
-    <button onClick={() => !stockIsSaved() && saveStock(stock)}>
-        {stockIsSaved() ? 'Saved' : 'Save'}
+const SaveButton = ({ stock, savedStocks, stockMethods }) => (
+    <button onClick={() => !stockIsSaved(stock, savedStocks) && stockMethods.addStock(stock)}>
+        {stockIsSaved(stock, savedStocks) ? 'Saved' : 'Save'}
     </button>
 );
 

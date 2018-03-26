@@ -9,7 +9,7 @@ import SavedStocks from './components/SavedStocks';
 class Home extends Component {
     render() {
         return (
-            <SavedStocks />
+            <SavedStocks savedStocks={this.props.savedStocks} />
         );
     }
 }
