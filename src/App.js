@@ -22,32 +22,7 @@ class App extends Component {
     //     stocks: [],
     // }
 
-    constructor(props) {
-        super(props);
 
-        let stocks = [];
-
-        const store = window.localStorage;
-        if (store.getItem('symbols')) {
-            stocks = JSON.parse(store.getItem('symbols'));
-        }
-
-        this.state = {
-            stocks
-        };
-
-    }
-
-    async componentDidMount() {
-        if (this.state.stocks.length === 0) {
-            const res = await fetch(API_BASE + SYMBOLS_ROUTE);
-            const stocks = await res.json();
-            this.setState({ stocks });
-
-            const store = window.localStorage;
-            store.setItem('symbols', JSON.stringify(stocks));
-        }
-    }
 
     render() {
         return (
@@ -57,7 +32,7 @@ class App extends Component {
                         <Link to="/"><img src={logo} className="App-logo" alt="logo" /></Link>
                         <h1 className="App-title">Restock</h1>
                     </header>
-                    <Search stocks={this.state.stocks} />
+                    <Search />
                     <Switch>
                         <Route exact path="/" component={Home}/>
                         <Route path="/stock/:symbol" component={StockPage} />

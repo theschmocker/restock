@@ -4,10 +4,37 @@ import { Link, withRouter } from 'react-router-dom';
 
 import SaveButton from './SaveButton';
 
+const API_BASE = 'https://api.iextrading.com/1.0';
+const SYMBOLS_ROUTE = '/ref-data/symbols';
+
 class Search extends Component {
-    state = {
-        query: '',
-        focus: false,
+    constructor(props) {
+        super(props);
+
+        let stocks = [];
+
+        const store = window.localStorage;
+        if (store.getItem('symbols')) {
+            stocks = JSON.parse(store.getItem('symbols'));
+        }
+
+        this.state = {
+            stocks,
+            query: '',
+            focus: false,
+        };
+
+    }
+
+    async componentDidMount() {
+        if (this.state.stocks.length === 0) {
+            const res = await fetch(API_BASE + SYMBOLS_ROUTE);
+            const stocks = await res.json();
+            this.setState({ stocks });
+
+            const store = window.localStorage;
+            store.setItem('symbols', JSON.stringify(stocks));
+        }
     }
 
     changeInput = (e) => {
@@ -45,7 +72,7 @@ class Search extends Component {
                     ref={input => this.input = input} 
                     onChange={this.changeInput}
                 />
-                <SearchResults inputFocus={this.state.focus} stocks={this.props.stocks} query={this.state.query} />
+                <SearchResults inputFocus={this.state.focus} stocks={this.state.stocks} query={this.state.query} />
             </SearchWrapper>
         );
     }
